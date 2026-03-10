@@ -38,28 +38,25 @@ body{font-family:'Nunito',sans-serif;background:#FAFAF7;color:#3C3C3B;min-height
 <div id="mainView" style="padding:16px;max-width:500px;margin:0 auto">
     <div id="settings" style="display:none;background:#fff;padding:15px;border-radius:15px;margin-bottom:15px;box-shadow:0 4px 12px rgba(0,0,0,0.05)">
         <p style="font-size:11px;font-weight:800;margin-bottom:10px;color:#aaa;text-transform:uppercase">Configurazione</p>
-        <div style="display:flex;flex-direction:column;gap:10px">
-            <div>
-                <label style="display:block;font-size:12px;font-weight:700;margin-bottom:4px">Durata Lezione (min)</label>
-                <input type="number" id="classDuration" value="45" style="width:100%;padding:8px;border-radius:8px;border:1px solid #eee;font-family:inherit">
-            </div>
+        <div>
+            <label style="display:block;font-size:12px;font-weight:700;margin-bottom:4px">Durata Lezione (min)</label>
+            <input type="number" id="classDuration" value="45" style="width:100%;padding:8px;border-radius:8px;border:1px solid #eee;font-family:inherit">
         </div>
     </div>
 
     <div style="display:flex;gap:8px;margin-bottom:20px;overflow-x:auto;padding-bottom:5px">
-        <button class="sm active" onclick="setGroup('babies',this)" style="min-width:80px;height:34px">👶 Babies</button>
-        <button class="sm" onclick="setGroup('kids',this)" style="min-width:80px;height:34px">👦 Kids</button>
-        <button class="sm" onclick="setGroup('tweens',this)" style="min-width:80px;height:34px">👧 Tweens</button>
+        <button id="btn-babies" class="sm active" onclick="setGroup('babies')" style="min-width:80px;height:34px">👶 Babies</button>
+        <button id="btn-kids" class="sm" onclick="setGroup('kids')" style="min-width:80px;height:34px">👦 Kids</button>
+        <button id="btn-tweens" class="sm" onclick="setGroup('tweens')" style="min-width:80px;height:34px">👧 Tweens</button>
     </div>
 
     <div style="background:#fff;border-radius:20px;padding:25px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,0.04);border:1px solid #f0f0f0">
         <div style="font-size:40px;margin-bottom:15px">📚</div>
         <h2 style="font-size:18px;font-weight:900;margin-bottom:8px">Nuovo Planner</h2>
         <p style="font-size:13px;color:#888;margin-bottom:20px">Carica la Teacher Guide (PDF o Foto)</p>
-        
         <input type="file" id="fileInput" accept="image/*,application/pdf" style="display:none">
         <button class="btn" onclick="document.getElementById('fileInput').click()" style="background:#FFD600;color:#3C3C3B;width:100%;padding:14px;font-size:14px;box-shadow:0 4px 15px rgba(255,214,0,0.3)">
-            📸 CARICA LEZIONE
+            📸 CARICA PDF / FOTO
         </button>
     </div>
 
@@ -70,12 +67,17 @@ body{font-family:'Nunito',sans-serif;background:#FAFAF7;color:#3C3C3B;min-height
 let currentGroup = 'babies';
 const colors = { babies: '#FFD600', kids: '#00AEEF', tweens: '#ED008C' };
 
-function setGroup(g, btn) {
+function setGroup(g) {
     currentGroup = g;
-    document.querySelectorAll('.sm').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    btn.style.backgroundColor = colors[g];
-    btn.style.color = g === 'babies' ? '#3C3C3B' : '#fff';
+    document.querySelectorAll('.sm').forEach(b => {
+        b.classList.remove('active');
+        b.style.backgroundColor = '#fafafa';
+        b.style.color = '#bbb';
+    });
+    const activeBtn = document.getElementById('btn-' + g);
+    activeBtn.classList.add('active');
+    activeBtn.style.backgroundColor = colors[g];
+    activeBtn.style.color = g === 'babies' ? '#3C3C3B' : '#fff';
 }
 
 function toggleSettings() {
@@ -86,32 +88,15 @@ function toggleSettings() {
 document.getElementById('fileInput').onchange = async function(e) {
     const file = e.target.files[0];
     if(!file) return;
-
     document.getElementById('loading').style.display = 'flex';
     const reader = new FileReader();
-    
     reader.onload = async function() {
         const base64 = reader.result.split(',')[1];
         const isPdf = file.type === 'application/pdf';
         
-        // Prepariamo il contenuto per Claude
-        const content = [];
-        if (isPdf) {
-            content.push({
-                type: "document",
-                source: { type: "base64", media_type: "application/pdf", data: base64 }
-            });
-        } else {
-            content.push({
-                type: "image",
-                source: { type: "base64", media_type: "image/png", data: base64 }
-            });
-        }
-        
-        content.push({
-            type: "text",
-            text: `Estrai le attività da questa lezione Kids&Us per il gruppo ${currentGroup}. Rispondi solo con un JSON: { "unit": "...", "lesson": "...", "activities": [ { "id": 1, "name": "...", "duration": 5, "description": "...", "targetLanguage": "...", "optional": false } ] }`
-        });
+        const prompt = `Estrai le attività della lezione Kids&Us per il gruppo ${currentGroup}. 
+        Rispondi solo con un JSON strutturato: 
+        { "unit": "...", "lesson": "...", "activities": [ { "id": 1, "name": "...", "duration": 5, "tracks": "...", "description": "...", "targetLanguage": "...", "optional": false, "sub": [] } ] }`;
 
         try {
             const response = await fetch('/api/generate', {
@@ -120,13 +105,17 @@ document.getElementById('fileInput').onchange = async function(e) {
                 body: JSON.stringify({
                     model: "claude-3-5-sonnet-20241022",
                     max_tokens: 4000,
-                    messages: [{ role: "user", content: content }]
+                    messages: [{
+                        role: "user",
+                        content: [
+                            { type: isPdf ? "document" : "image", source: { type: "base64", media_type: isPdf ? "application/pdf" : "image/png", data: base64 } },
+                            { type: "text", text: prompt }
+                        ]
+                    }]
                 })
             });
-
             const data = await response.json();
-            const text = data.content[0].text;
-            const json = JSON.parse(text.match(/\{[\s\S]*\}/)[0]);
+            const json = JSON.parse(data.content[0].text.match(/\{[\s\S]*\}/)[0]);
             renderPlanner(json);
         } catch (err) {
             alert("Errore: " + err.message);
@@ -141,27 +130,28 @@ function renderPlanner(data) {
     const res = document.getElementById('result');
     res.style.display = 'block';
     const cc = colors[currentGroup];
+    let time = 0;
     
     let html = `<div style="background:#fff;padding:20px;border-radius:20px;box-shadow:0 4px 15px rgba(0,0,0,0.05)">
         <h3 style="color:${cc};margin-bottom:5px">Unit ${data.unit} - ${data.lesson}</h3>
-        <p style="font-size:12px;color:#aaa;margin-bottom:15px">${currentGroup.toUpperCase()}</p>`;
-    
-    let time = 0;
+        <p style="font-size:11px;font-weight:800;color:#aaa;margin-bottom:20px">${currentGroup.toUpperCase()}</p>`;
+
     data.activities.forEach(a => {
-        html += `<div style="padding:10px 0;border-bottom:1px solid #eee">
-            <div style="display:flex;gap:10px;align-items:baseline">
-                <b style="font-family:monospace;color:${cc};width:40px">${time}'</b>
+        html += `<div style="padding:10px 0;border-bottom:1px solid #f5f5f5;opacity:${a.optional ? '0.6' : '1'}">
+            <div style="display:flex;gap:12px;align-items:baseline">
+                <b style="font-family:monospace;color:${cc};width:45px;font-size:13px">${time}'</b>
                 <div style="flex:1">
-                    <b style="font-size:14px">${a.name}</b>
-                    <p style="font-size:12px;color:#666">${a.description}</p>
-                    ${a.targetLanguage ? `<div style="margin-top:5px;padding:5px;background:#FFFDE7;border-radius:5px;font-size:11px;border-left:3px solid ${cc}"><b>Target:</b> ${a.targetLanguage}</div>` : ''}
+                    <b style="font-size:14px">${a.name} ${a.optional ? '[OPT]' : ''}</b>
+                    <span style="font-size:10px;color:#aaa;margin-left:5px">${a.duration}m ${a.tracks || ''}</span>
+                    <p style="font-size:12px;color:#666;margin-top:4px;line-height:1.4">${a.description}</p>
+                    ${a.targetLanguage ? `<div style="margin-top:6px;padding:6px 10px;background:#FFFDE7;border-radius:8px;font-size:11px;border-left:3px solid ${cc};color:#555"><b>Target:</b> ${a.targetLanguage}</div>` : ''}
                 </div>
             </div>
         </div>`;
         time += a.duration;
     });
     
-    html += `</div>`;
+    html += `<button class="btn" onclick="window.location.reload()" style="background:#f5f5f5;color:#aaa;width:100%;margin-top:20px;justify-content:center">NUOVO SCAN</button></div>`;
     res.innerHTML = html;
 }
 </script>
