@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="it">
 <head>
 <meta charset="UTF-8">
@@ -26,12 +27,12 @@ input,textarea,select{font-family:'Nunito',sans-serif;font-weight:600}
 <script>
 // ─── DATA ──────────────────────────────────────────────────
 const CS=[
-{id:"mousy",name:"Mousy",color:"#8CB43B",bg:"#F0F7E1",em:"\u{1F42D}",age:"1 anno",parts:["Part One","Part Two","Part Three","Part Four"],dp:10},
-{id:"linda",name:"Linda",color:"#F26522",bg:"#FFF0E6",em:"\u{1F431}",age:"2 anni",parts:["Part One","Part Two","Part Three","Part Four"],dp:10},
-{id:"sam",name:"Sam",color:"#00B3B0",bg:"#E0F7F7",em:"\u{1F9F8}",age:"3 anni",parts:["Story 1: Happy Birthday","Story 2: The Park","Story 3: The Zoo","Story 4: The Picnic"],dp:10},
-{id:"emma",name:"Emma",color:"#E878A0",bg:"#FFF0F5",em:"\u{1F98B}",age:"4 anni",parts:["Story 1: Sweets","Story 2: Eggs","Story 3: Bath","Story 4"],dp:10},
-{id:"oliver",name:"Oliver",color:"#00B3B0",bg:"#E0F7F7",em:"\u{1F438}",age:"5 anni",parts:["Story 1: Wobbly Tooth","Story 2: Flu","Story 3: Baby","Story 4"],dp:10},
-{id:"marcia",name:"Marcia",color:"#E94E58",bg:"#FFEBEE",em:"\u{1F380}",age:"6 anni",parts:["Story 1: The Alien","Story 2: Polly Goes to School","Story 3: The Ski Trip","Story 4: The Birthday Cake"],dp:10}
+{id:"mousy",name:"Mousy",color:"#8CB43B",bg:"#F0F7E1",em:"🐭",age:"1 anno",parts:["Part One","Part Two","Part Three","Part Four"],dp:10},
+{id:"linda",name:"Linda",color:"#F26522",bg:"#FFF0E6",em:"🐱",age:"2 anni",parts:["Part One","Part Two","Part Three","Part Four"],dp:10},
+{id:"sam",name:"Sam",color:"#00B3B0",bg:"#E0F7F7",em:"🧸",age:"3 anni",parts:["Story 1: Happy Birthday","Story 2: The Park","Story 3: The Zoo","Story 4: The Picnic"],dp:10},
+{id:"emma",name:"Emma",color:"#E878A0",bg:"#FFF0F5",em:"🦋",age:"4 anni",parts:["Story 1: Sweets","Story 2: Eggs","Story 3: Bath","Story 4"],dp:10},
+{id:"oliver",name:"Oliver",color:"#00B3B0",bg:"#E0F7F7",em:"🐸",age:"5 anni",parts:["Story 1: Wobbly Tooth","Story 2: Flu","Story 3: Baby","Story 4"],dp:10},
+{id:"marcia",name:"Marcia",color:"#E94E58",bg:"#FFEBEE",em:"🎀",age:"6 anni",parts:["Story 1: The Alien","Story 2: Polly Goes to School","Story 3: The Ski Trip","Story 4: The Birthday Cake"],dp:10}
 ];
 
 // ─── STATE ─────────────────────────────────────────────────
@@ -190,7 +191,7 @@ function render(){
   // Header
   const hdr=h("header",{style:{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"10px 20px",background:"#fff",borderBottom:"3px solid #8CB43B",position:"sticky",top:"0",zIndex:"100",flexWrap:"wrap",gap:"8px"}});
   const logo=h("div",{style:{display:"flex",alignItems:"center",gap:"10px",cursor:"pointer"},onClick:()=>{state.view="home";state.sc=null;state.sp=null;state.sd=null;stopTimer();render()}});
-  logo.appendChild(h("div",{style:{width:"38px",height:"38px",borderRadius:"11px",background:"linear-gradient(135deg,#8CB43B,#A5C74A)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"18px"}},"\u{1F42D}"));
+  logo.appendChild(h("div",{style:{width:"38px",height:"38px",borderRadius:"11px",background:"linear-gradient(135deg,#8CB43B,#A5C74A)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"18px"}},"🐭"));
   const logoTxt=h("div");
   logoTxt.innerHTML='<h1 style="margin:0;font-size:15px;font-weight:800"><span style="color:#8CB43B">Kids</span><span style="color:#F26522">&</span><span style="color:#E878A0">Us</span> Planner</h1>';
   logo.appendChild(logoTxt);
@@ -216,7 +217,7 @@ function render(){
   // ── HOME ──
   if(state.view==="home"){
     const welcome=h("div",{style:{background:"linear-gradient(135deg,#F0F7E1,#E0F7F7,#FFF0F5)",borderRadius:"20px",padding:"28px 24px",marginBottom:"12px"}});
-    welcome.innerHTML='<h2 style="font-size:24px;font-weight:900">Ciao Chiara! \u{1F44B}</h2><p style="margin-top:8px;font-size:14px;color:#666;font-weight:600">Seleziona un corso per gestire le lezioni.</p>';
+    welcome.innerHTML='<h2 style="font-size:24px;font-weight:900">Ciao Chiara! 👋</h2><p style="margin-top:8px;font-size:14px;color:#666;font-weight:600">Seleziona un corso per gestire le lezioni.</p>';
     main.appendChild(welcome);
     
     CS.forEach((c,i)=>{
@@ -227,7 +228,7 @@ function render(){
       const info=h("div",{style:{flex:"1"}});
       info.innerHTML='<h3 style="font-size:17px;font-weight:800">'+c.name+'</h3><p style="font-size:12px;color:#888;font-weight:600">'+c.age+(n?" \u2014 "+n+" lezioni":"")+(nR?" \u2014 "+nR+" routine":"")+'</p>';
       card.appendChild(info);
-      card.appendChild(h("span",{style:{fontSize:"20px",color:c.color,fontWeight:"800"}},"\u{2192}"));
+      card.appendChild(h("span",{style:{fontSize:"20px",color:c.color,fontWeight:"800"}},"→"));
       main.appendChild(card);
     });
   }
@@ -252,7 +253,7 @@ function render(){
       const hasRt=!!state.routines[rtKey];
       const nRt=hasRt?state.routines[rtKey].length:0;
       
-      const rtBtn=h("button",{class:"btn",style:{background:hasRt?"#E8F5E9":"#FFF3E0",color:hasRt?"#2E7D32":"#E65100",border:hasRt?"1px solid #A5D6A7":"1px dashed #FFB74D",fontSize:"11px",padding:"5px 12px"},onClick:()=>{state.sp=p;state.sd=null;state.view="routines";render()}},hasRt?"\u{1F504} "+nRt+" routine":"\u{1F4F8} Carica routine");
+      const rtBtn=h("button",{class:"btn",style:{background:hasRt?"#E8F5E9":"#FFF3E0",color:hasRt?"#2E7D32":"#E65100",border:hasRt?"1px solid #A5D6A7":"1px dashed #FFB74D",fontSize:"11px",padding:"5px 12px"},onClick:()=>{state.sp=p;state.sd=null;state.view="routines";render()}},hasRt?"🔄 "+nRt+" routine":"📸 Carica routine");
       partHdr.appendChild(rtBtn);
       sec.appendChild(partHdr);
       
@@ -277,7 +278,7 @@ function render(){
   // ── ROUTINES ──
   else if(state.view==="routines"&&state.sc&&state.sp){
     const hd=h("div",{style:{display:"flex",alignItems:"center",gap:"12px",marginBottom:"20px"}});
-    hd.innerHTML='<span style="font-size:30px">\u{1F504}</span><div><h2 style="font-size:20px;font-weight:800">Routine \u2014 '+state.sp+'</h2><p style="font-size:13px;color:#888;font-weight:600">'+state.sc.em+' '+state.sc.name+'</p></div>';
+    hd.innerHTML='<span style="font-size:30px">🔄</span><div><h2 style="font-size:20px;font-weight:800">Routine \u2014 '+state.sp+'</h2><p style="font-size:13px;color:#888;font-weight:600">'+state.sc.em+' '+state.sc.name+'</p></div>';
     main.appendChild(hd);
     
     // Status
@@ -293,26 +294,26 @@ function render(){
     
     if(!cR&&!state.scn){
       const empty=h("div",{style:{textAlign:"center",padding:"48px 24px",background:"#fff",borderRadius:"20px",boxShadow:"0 2px 12px #0001"}});
-      empty.innerHTML='<div style="font-size:56px;margin-bottom:12px">\u{1F504}</div><h3 style="font-size:18px;font-weight:800;margin-bottom:8px">Nessuna routine</h3><p style="font-size:13px;color:#888;font-weight:600;margin-bottom:20px;max-width:420px;margin-left:auto;margin-right:auto">Fotografa le pagine della TG che descrivono Welcome, Warm-up e Goodbye per <b>'+state.sp+'</b>. Basta una volta: poi si inseriscono automaticamente in ogni Day.</p>';
-      const scanBtn=h("button",{class:"btn",style:{background:"#F26522",color:"#fff",fontSize:"15px",padding:"12px 28px"},onClick:()=>document.getElementById("rtFileInput").click()},"\u{1F4F8} Scansiona routine");
+      empty.innerHTML='<div style="font-size:56px;margin-bottom:12px">🔄</div><h3 style="font-size:18px;font-weight:800;margin-bottom:8px">Nessuna routine</h3><p style="font-size:13px;color:#888;font-weight:600;margin-bottom:20px;max-width:420px;margin-left:auto;margin-right:auto">Fotografa le pagine della TG che descrivono Welcome, Warm-up e Goodbye per <b>'+state.sp+'</b>. Basta una volta: poi si inseriscono automaticamente in ogni Day.</p>';
+      const scanBtn=h("button",{class:"btn",style:{background:"#F26522",color:"#fff",fontSize:"15px",padding:"12px 28px"},onClick:()=>document.getElementById("rtFileInput").click()},"📸 Scansiona routine");
       empty.appendChild(scanBtn);
-      const fi=h("input",{type:"file",id:"rtFileInput",accept:"image/*",multiple:"true",style:{display:"none"},onChange:(e)=>{scanRoutines(e.target.files);e.target.value=""}});
+      const fi=h("input",{type:"file",id:"rtFileInput",accept:"image/*",multiple:"",style:{display:"none"},onChange:(e)=>{scanRoutines(e.target.files);e.target.value=""}});
       empty.appendChild(fi);
       main.appendChild(empty);
     }
     
     if(cR&&cR.length>0){
       const btns=h("div",{style:{display:"flex",gap:"8px",marginBottom:"16px"}});
-      const rescanBtn=h("button",{class:"btn",style:{background:"#F26522",color:"#fff"},onClick:()=>document.getElementById("rtFileInput2").click()},"\u{1F4F8} Ri-scansiona");
+      const rescanBtn=h("button",{class:"btn",style:{background:"#F26522",color:"#fff"},onClick:()=>document.getElementById("rtFileInput2").click()},"📸 Ri-scansiona");
       btns.appendChild(rescanBtn);
-      btns.appendChild(h("input",{type:"file",id:"rtFileInput2",accept:"image/*",multiple:"true",style:{display:"none"},onChange:(e)=>{scanRoutines(e.target.files);e.target.value=""}}));
+      btns.appendChild(h("input",{type:"file",id:"rtFileInput2",accept:"image/*",multiple:"",style:{display:"none"},onChange:(e)=>{scanRoutines(e.target.files);e.target.value=""}}));
       btns.appendChild(h("button",{class:"btn",style:{background:"#f0f0f0",color:"#888"},onClick:()=>{state.view="course";state.sp=null;render()}},"Torna"));
       main.appendChild(btns);
       
       ["welcome","warmup","goodbye"].forEach(type=>{
         const items=cR.filter(r=>r.type===type);
         if(!items.length)return;
-        const label=type==="welcome"?"\u{1F44B} Welcome":type==="warmup"?"\u{1F3B5} Warm-up":"\u{1F31C} Goodbye";
+        const label=type==="welcome"?"👋 Welcome":type==="warmup"?"🎵 Warm-up":"🌜 Goodbye";
         main.appendChild(h("h4",{style:{fontSize:"13px",fontWeight:"800",color:cc,margin:"12px 0 6px"}},label));
         items.forEach(r=>{
           const card=h("div",{class:"card",style:{borderLeft:"5px solid "+cc,marginBottom:"6px"}});
@@ -350,7 +351,7 @@ function render(){
     
     const scanBtn=h("button",{class:"btn",style:{background:"#F26522",color:"#fff"},onClick:()=>document.getElementById("dayFileInput").click()},cl?"Ri-scan":"Scan TG");
     lbtns.appendChild(scanBtn);
-    lbtns.appendChild(h("input",{type:"file",id:"dayFileInput",accept:"image/*",multiple:"true",style:{display:"none"},onChange:(e)=>{scanDay(e.target.files);e.target.value=""}}));
+    lbtns.appendChild(h("input",{type:"file",id:"dayFileInput",accept:"image/*",multiple:"",style:{display:"none"},onChange:(e)=>{scanDay(e.target.files);e.target.value=""}}));
     
     if(cl&&cl.activities.length){
       lbtns.appendChild(h("button",{class:"btn",style:{background:"#00B3B0",color:"#fff"},onClick:()=>{state.view="materials";render()}},"Mat."));
@@ -362,7 +363,7 @@ function render(){
     // Warning if no routines
     if(!hasRt){
       const warn=h("div",{style:{padding:"10px 14px",background:"#FFF3E0",borderRadius:"10px",marginBottom:"12px",fontSize:"12px",fontWeight:"600",color:"#E65100",display:"flex",alignItems:"center",gap:"8px"}});
-      warn.innerHTML='\u{26A0}\u{FE0F} Routine non caricate per '+state.sp+'.';
+      warn.innerHTML='⚠️ Routine non caricate per '+state.sp+'.';
       warn.appendChild(h("button",{class:"btn",style:{background:"#F26522",color:"#fff",fontSize:"11px",padding:"4px 10px"},onClick:()=>{state.sd=null;state.view="routines";render()}},"Carica"));
       main.appendChild(warn);
     }
@@ -379,7 +380,7 @@ function render(){
       if(!state.scn){
         const empty=h("div",{style:{textAlign:"center",padding:"60px 24px",background:"#fff",borderRadius:"20px",boxShadow:"0 2px 12px #0001"}});
         empty.innerHTML='<div style="font-size:64px;margin-bottom:12px">'+state.sc.em+'</div><h3 style="font-size:18px;font-weight:800;margin-bottom:8px">Lezione vuota</h3><p style="font-size:14px;color:#888;font-weight:600;margin-bottom:20px">Fotografa le pagine del Day (2-3 foto).'+(hasRt?" Le routine si inseriscono automaticamente.":"")+'</p>';
-        empty.appendChild(h("button",{class:"btn",style:{background:"#F26522",color:"#fff",fontSize:"15px",padding:"12px 28px"},onClick:()=>document.getElementById("dayFileInput").click()},"\u{1F4F8} Scan TG"));
+        empty.appendChild(h("button",{class:"btn",style:{background:"#F26522",color:"#fff",fontSize:"15px",padding:"12px 28px"},onClick:()=>document.getElementById("dayFileInput").click()},"📸 Scan TG"));
         main.appendChild(empty);
       }
     }
@@ -606,8 +607,8 @@ function renderPrint(){
 }
 
 // ─── INIT ──────────────────────────────────────────────────
-load();
-render();
+try{load();render()}catch(e){document.getElementById('app').innerHTML='<pre style="padding:20px;color:red">'+e.message+'\n'+e.stack+'</pre>'}
+
 </script>
 </body>
 </html>
