@@ -38,9 +38,15 @@ body{font-family:'Nunito',sans-serif;background:#FAFAF7;color:#3C3C3B;min-height
 <div id="mainView" style="padding:16px;max-width:500px;margin:0 auto">
     <div id="settings" style="display:none;background:#fff;padding:15px;border-radius:15px;margin-bottom:15px;box-shadow:0 4px 12px rgba(0,0,0,0.05)">
         <p style="font-size:11px;font-weight:800;margin-bottom:10px;color:#aaa;text-transform:uppercase">Configurazione</p>
-        <div>
-            <label style="display:block;font-size:12px;font-weight:700;margin-bottom:4px">Durata Lezione (min)</label>
-            <input type="number" id="classDuration" value="45" style="width:100%;padding:8px;border-radius:8px;border:1px solid #eee;font-family:inherit">
+        <div style="display:flex;flex-direction:column;gap:10px">
+            <div>
+                <label style="display:block;font-size:12px;font-weight:700;margin-bottom:4px">Durata Lezione (min)</label>
+                <input type="number" id="classDuration" value="45" style="width:100%;padding:8px;border-radius:8px;border:1px solid #eee;font-family:inherit">
+            </div>
+            <div>
+                <label style="display:block;font-size:12px;font-weight:700;margin-bottom:4px">Nome Insegnante</label>
+                <input type="text" id="teacherName" placeholder="Tua firma..." style="width:100%;padding:8px;border-radius:8px;border:1px solid #eee;font-family:inherit">
+            </div>
         </div>
     </div>
 
@@ -50,13 +56,13 @@ body{font-family:'Nunito',sans-serif;background:#FAFAF7;color:#3C3C3B;min-height
         <button id="btn-tweens" class="sm" onclick="setGroup('tweens')" style="min-width:80px;height:34px">👧 Tweens</button>
     </div>
 
-    <div style="background:#fff;border-radius:20px;padding:25px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,0.04);border:1px solid #f0f0f0">
-        <div style="font-size:40px;margin-bottom:15px">📚</div>
-        <h2 style="font-size:18px;font-weight:900;margin-bottom:8px">Nuovo Planner</h2>
-        <p style="font-size:13px;color:#888;margin-bottom:20px">Carica la Teacher Guide (PDF o Foto)</p>
+    <div style="background:#fff;border-radius:24px;padding:35px 25px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,0.04);border:1px solid #f0f0f0">
+        <div style="width:60px;height:60px;background:#FAFAF7;border-radius:20px;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:28px">📚</div>
+        <h2 style="font-size:20px;font-weight:900;margin-bottom:8px;letter-spacing:-0.5px">Lezione del Giorno</h2>
+        <p style="font-size:13px;color:#888;margin-bottom:25px;line-height:1.5">Carica la pagina della Teacher Guide<br>(PDF o Foto)</p>
         <input type="file" id="fileInput" accept="image/*,application/pdf" style="display:none">
-        <button class="btn" onclick="document.getElementById('fileInput').click()" style="background:#FFD600;color:#3C3C3B;width:100%;padding:14px;font-size:14px;box-shadow:0 4px 15px rgba(255,214,0,0.3)">
-            📸 CARICA PDF / FOTO
+        <button class="btn" onclick="document.getElementById('fileInput').click()" style="background:#FFD600;color:#3C3C3B;width:100%;padding:16px;font-size:14px;box-shadow:0 4px 15px rgba(255,214,0,0.3);display:flex;align-items:center;justify-content:center;gap:10px">
+            <span style="font-size:18px">📸</span> CARICA GUIDA
         </button>
     </div>
 
@@ -64,95 +70,95 @@ body{font-family:'Nunito',sans-serif;background:#FAFAF7;color:#3C3C3B;min-height
 </div>
 
 <script>
-let currentGroup = 'babies';
-const colors = { babies: '#FFD600', kids: '#00AEEF', tweens: '#ED008C' };
+let currentGroup='babies';
+const colors={babies:'#FFD600',kids:'#00AEEF',tweens:'#ED008C'};
 
-function setGroup(g) {
-    currentGroup = g;
-    document.querySelectorAll('.sm').forEach(b => {
+function setGroup(g){
+    currentGroup=g;
+    document.querySelectorAll('.sm').forEach(b=>{
         b.classList.remove('active');
-        b.style.backgroundColor = '#fafafa';
-        b.style.color = '#bbb';
+        b.style.backgroundColor='#fafafa';
+        b.style.color='#bbb';
     });
-    const activeBtn = document.getElementById('btn-' + g);
-    activeBtn.classList.add('active');
-    activeBtn.style.backgroundColor = colors[g];
-    activeBtn.style.color = g === 'babies' ? '#3C3C3B' : '#fff';
+    const ab=document.getElementById('btn-'+g);
+    ab.classList.add('active');
+    ab.style.backgroundColor=colors[g];
+    ab.style.color=g==='babies'?'#3C3C3B':'#fff';
 }
 
-function toggleSettings() {
-    const s = document.getElementById('settings');
-    s.style.display = s.style.display === 'none' ? 'block' : 'none';
+function toggleSettings(){
+    const s=document.getElementById('settings');
+    s.style.display=s.style.display==='none'?'block':'none';
 }
 
-document.getElementById('fileInput').onchange = async function(e) {
-    const file = e.target.files[0];
-    if(!file) return;
-    document.getElementById('loading').style.display = 'flex';
-    const reader = new FileReader();
-    reader.onload = async function() {
-        const base64 = reader.result.split(',')[1];
-        const isPdf = file.type === 'application/pdf';
-        
-        const prompt = `Estrai le attività della lezione Kids&Us per il gruppo ${currentGroup}. 
-        Rispondi solo con un JSON strutturato: 
-        { "unit": "...", "lesson": "...", "activities": [ { "id": 1, "name": "...", "duration": 5, "tracks": "...", "description": "...", "targetLanguage": "...", "optional": false, "sub": [] } ] }`;
-
-        try {
-            const response = await fetch('/api/generate', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    model: "claude-3-5-sonnet-20241022",
-                    max_tokens: 4000,
-                    messages: [{
-                        role: "user",
-                        content: [
-                            { type: isPdf ? "document" : "image", source: { type: "base64", media_type: isPdf ? "application/pdf" : "image/png", data: base64 } },
-                            { type: "text", text: prompt }
+document.getElementById('fileInput').onchange=async function(e){
+    const file=e.target.files[0];
+    if(!file)return;
+    document.getElementById('loading').style.display='flex';
+    const reader=new FileReader();
+    reader.onload=async function(){
+        const b64=reader.result.split(',')[1];
+        const isPdf=file.type==='application/pdf';
+        try{
+            const res=await fetch('/api/generate',{
+                method:'POST',
+                headers:{'Content-Type':'application/json'},
+                body:JSON.stringify({
+                    model:"claude-3-5-sonnet-20241022",
+                    max_tokens:4000,
+                    messages:[{
+                        role:"user",
+                        content:[
+                            {type:isPdf?"document":"image",source:{type:"base64",media_type:isPdf?"application/pdf":"image/png",data:b64}},
+                            {type:"text",text:`Estrai la lezione Kids&Us per ${currentGroup}. Rispondi SOLO JSON: {"unit":"...","lesson":"...","activities":[{"id":1,"name":"...","duration":5,"tracks":"...","description":"...","targetLanguage":"...","optional":false,"sub":[]}]}`}
                         ]
                     }]
                 })
             });
-            const data = await response.json();
-            const json = JSON.parse(data.content[0].text.match(/\{[\s\S]*\}/)[0]);
-            renderPlanner(json);
-        } catch (err) {
-            alert("Errore: " + err.message);
-        } finally {
-            document.getElementById('loading').style.display = 'none';
-        }
+            const d=await res.json();
+            const j=JSON.parse(d.content[0].text.match(/\{[\s\S]*\}/)[0]);
+            renderPlanner(j);
+        }catch(err){alert("Errore: "+err.message)}
+        finally{document.getElementById('loading').style.display='none'}
     };
     reader.readAsDataURL(file);
 };
 
-function renderPlanner(data) {
-    const res = document.getElementById('result');
-    res.style.display = 'block';
-    const cc = colors[currentGroup];
-    let time = 0;
-    
-    let html = `<div style="background:#fff;padding:20px;border-radius:20px;box-shadow:0 4px 15px rgba(0,0,0,0.05)">
-        <h3 style="color:${cc};margin-bottom:5px">Unit ${data.unit} - ${data.lesson}</h3>
-        <p style="font-size:11px;font-weight:800;color:#aaa;margin-bottom:20px">${currentGroup.toUpperCase()}</p>`;
+function renderPlanner(data){
+    const r=document.getElementById('result');
+    r.style.display='block';
+    const cc=colors[currentGroup];
+    const dur=parseInt(document.getElementById('classDuration').value)||45;
+    const t=data.activities.reduce((s,a)=>s+a.duration,0);
+    const ti=[]; let cu=0;
+    data.activities.forEach(a=>{
+        ti.push({id:a.id,st:Math.floor(cu*dur/t)+\"'\"});
+        cu+=a.duration;
+    });
 
-    data.activities.forEach(a => {
-        html += `<div style="padding:10px 0;border-bottom:1px solid #f5f5f5;opacity:${a.optional ? '0.6' : '1'}">
+    let html=`<div style="background:#fff;padding:20px;border-radius:24px;box-shadow:0 4px 20px rgba(0,0,0,0.06)">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px">
+            <div><h3 style="font-size:18px;font-weight:900;color:${cc}">Unit ${data.unit}</h3><p style="font-size:12px;color:#aaa;font-weight:700">${data.lesson.toUpperCase()}</p></div>
+            <div style="text-align:right"><p style="font-size:10px;font-weight:800;color:#ccc">GROUP</p><p style="font-size:12px;font-weight:900;color:${cc}">${currentGroup.toUpperCase()}</p></div>
+        </div>`;
+
+    data.activities.forEach(a=>{
+        const timeObj=ti.find(x=>x.id===a.id);
+        html+=`<div style="padding:12px 0;border-bottom:1px solid #f8f8f8;opacity:${a.optional?'.5':'1'}">
             <div style="display:flex;gap:12px;align-items:baseline">
-                <b style="font-family:monospace;color:${cc};width:45px;font-size:13px">${time}'</b>
+                <b style="font-family:monospace;color:${cc};width:45px;font-size:13px">${timeObj?timeObj.st:"--"}</b>
                 <div style="flex:1">
-                    <b style="font-size:14px">${a.name} ${a.optional ? '[OPT]' : ''}</b>
-                    <span style="font-size:10px;color:#aaa;margin-left:5px">${a.duration}m ${a.tracks || ''}</span>
+                    <b style="font-size:14px;display:block">${a.name} ${a.optional?'<span style="font-size:9px;color:#aaa;vertical-align:middle">[OPT]</span>':''}</b>
+                    <span style="font-size:10px;color:#bbb;font-weight:700;letter-spacing:0.5px">${a.duration}M ${a.tracks||''}</span>
                     <p style="font-size:12px;color:#666;margin-top:4px;line-height:1.4">${a.description}</p>
-                    ${a.targetLanguage ? `<div style="margin-top:6px;padding:6px 10px;background:#FFFDE7;border-radius:8px;font-size:11px;border-left:3px solid ${cc};color:#555"><b>Target:</b> ${a.targetLanguage}</div>` : ''}
+                    ${a.targetLanguage?`<div style="margin-top:8px;padding:8px 12px;background:#FFFDE7;border-radius:10px;font-size:11px;border-left:4px solid ${cc};color:#444"><b>Target:</b> ${a.targetLanguage}</div>`:''}
                 </div>
             </div>
         </div>`;
-        time += a.duration;
     });
-    
-    html += `<button class="btn" onclick="window.location.reload()" style="background:#f5f5f5;color:#aaa;width:100%;margin-top:20px;justify-content:center">NUOVO SCAN</button></div>`;
-    res.innerHTML = html;
+
+    html+=`<button class="btn" onclick="window.location.reload()" style="background:#f5f5f5;color:#aaa;width:100%;margin-top:25px;padding:12px;justify-content:center">NUOVA SCANSIONE</button></div>`;
+    r.innerHTML=html;
 }
 </script>
 </body>
